@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Will you be my Valentine?</title>
+  <meta name="description" content="A tiny website to ask someone to be your Valentine." />
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#1b0f1a;
+      --card:rgba(255,255,255,0.10);
+      --text:rgba(255,255,255,0.92);
+      --muted:rgba(255,255,255,0.70);
+      --pink:#ff4d8d;
+      --pink2:#ff7ab6;
+      --mint:#49f2c2;
+      --shadow: 0 20px 60px rgba(0,0,0,0.45);
+      --radius: 24px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% 15%, rgba(255,77,141,0.22), transparent 55%),
+        radial-gradient(900px 500px at 85% 25%, rgba(73,242,194,0.16), transparent 55%),
+        radial-gradient(900px 500px at 55% 85%, rgba(255,122,182,0.14), transparent 55%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    .wrap{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding:28px 16px;
+    }
+
+    .card{
+      width:min(860px, 100%);
+      background:linear-gradient(180deg, var(--card), rgba(255,255,255,0.06));
+      border:1px solid rgba(255,255,255,0.14);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:28px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: radial-gradient(500px 220px at 25% 10%, rgba(255,77,141,0.25), transparent 60%),
+                  radial-gradient(420px 200px at 78% 30%, rgba(73,242,194,0.18), transparent 60%);
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .content{position:relative; z-index:1;}
+
+    .top{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.14);
+      color:var(--muted);
+      font-size:14px;
+      backdrop-filter: blur(10px);
+    }
+
+    .badge .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:linear-gradient(180deg,var(--pink),var(--pink2));
+      box-shadow:0 0 0 6px rgba(255,77,141,0.14);
+    }
+
+    h1{
+      margin:18px 0 10px;
+      font-size: clamp(34px, 5vw, 54px);
+      line-height:1.05;
+      letter-spacing:-0.02em;
+    }
+
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size: clamp(16px, 2vw, 18px);
+      line-height:1.45;
+      max-width:62ch;
+    }
+
+    .grid{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap:18px;
+    }
+
+    @media (max-width: 860px){
+      .grid{grid-template-columns: 1fr;}
+    }
+
+    .panel{
+      background:rgba(255,255,255,0.07);
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius:18px;
+      padding:18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .note{
+      font-size:15px;
+      color:var(--muted);
+      line-height:1.5;
+      margin:0;
+    }
+
+    .cta{
+      display:flex;
+      gap:12px;
+      margin-top:16px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    button{
+      appearance:none;
+      border:none;
+      border-radius:14px;
+      padding:12px 16px;
+      font-size:16px;
+      font-weight:650;
+      cursor:pointer;
+      transition: transform 160ms ease, filter 160ms ease, background 160ms ease;
+      color:rgba(255,255,255,0.95);
+    }
+
+    .yes{
+      background:linear-gradient(180deg, var(--pink), var(--pink2));
+      box-shadow: 0 14px 28px rgba(255,77,141,0.26);
+    }
+
+    .yes:hover{ transform: translateY(-1px); filter:brightness(1.05); }
+    .yes:active{ transform: translateY(1px) scale(0.99); }
+
+    .no{
+      background:rgba(255,255,255,0.10);
+      border:1px solid rgba(255,255,255,0.16);
+      color:rgba(255,255,255,0.9);
+    }
+
+    .no:hover{ transform: translateY(-1px); filter:brightness(1.08); }
+    .no:active{ transform: translateY(1px) scale(0.99); }
+
+    .mini{
+      margin-left:auto;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .right{ display:flex; flex-direction:column; gap:12px; }
+
+    .polaroid{
+      background:linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
+      border:1px solid rgba(255,255,255,0.16);
+      border-radius:18px;
+      padding:14px;
+    }
+
+    .photo{
+      border-radius:14px;
+      height: 190px;
+      background:
+        radial-gradient(120px 120px at 20% 30%, rgba(255,77,141,0.38), transparent 60%),
+        radial-gradient(140px 140px at 80% 40%, rgba(73,242,194,0.26), transparent 60%),
+        linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+      border:1px solid rgba(255,255,255,0.14);
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:14px;
+      color:rgba(255,255,255,0.85);
+      font-weight:650;
+    }
+
+    .caption{
+      margin:10px 2px 2px;
+      color:rgba(255,255,255,0.78);
+      font-size:14px;
+    }
+
+    .footer{
+      margin-top:18px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* Modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      place-items:center;
+      padding:22px;
+      background:rgba(0,0,0,0.55);
+      z-index:50;
+    }
+
+    .modal.show{ display:grid; }
+
+    .modalCard{
+      width:min(560px, 100%);
+      background:linear-gradient(180deg, rgba(20,18,32,0.98), rgba(20,18,32,0.92));
+      border:1px solid rgba(255,255,255,0.14);
+      border-radius:22px;
+      box-shadow:var(--shadow);
+      padding:20px;
+    }
+
+    .modalHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .modalHeader h2{ margin:0; font-size:22px; }
+
+    .x{
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.14);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+    }
+
+    .modalBody{ margin-top:10px; }
+
+    .pillRow{ display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+
+    .pill{
+      padding:10px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.14);
+      font-size:14px;
+      color:rgba(255,255,255,0.86);
+    }
+
+    .copyRow{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+
+    .copyBtn{
+      background:rgba(255,255,255,0.10);
+      border:1px solid rgba(255,255,255,0.16);
+      font-weight:650;
+    }
+
+    .copyBtn:hover{ filter:brightness(1.08); transform: translateY(-1px); }
+
+    /* Confetti */
+    .confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:60;
+      overflow:hidden;
+    }
+
+    .confetti span{
+      position:absolute;
+      top:-10px;
+      width:10px;
+      height:16px;
+      border-radius:4px;
+      opacity:0.9;
+      animation: fall linear forwards;
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,0.25));
+    }
+
+    @keyframes fall{
+      to{ transform: translateY(110vh) rotate(540deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <main class="card" aria-label="Valentine ask page">
+      <div class="content">
+        <div class="top">
+          <div class="badge"><span class="dot" aria-hidden="true"></span> a tiny question from<strong id="fromName">Kent</strong></div>
+          <div class="badge"><span aria-hidden="true">💌</span><span id="toName">Krystle</span></div>
+        </div>
+
+        <h1>Will you be my Valentine?</h1>
+        <p class="sub" id="subtitle">
+          I’m flying home to see you and I want to make it official.
+          No pressure — just a whole lot of intention.
+        </p>
+
+        <section class="grid" aria-label="details and buttons">
+          <div class="panel">
+            <p class="note" id="noteText">
+              If you say yes, I’ve got a little plan: something cozy, something fun, and a pandan latte at some point.
+              And if you say no… I’ll still be grateful you read this.
+            </p>
+
+            <div class="cta" role="group" aria-label="answer buttons">
+              <button class="yes" id="yesBtn">Yes 💗</button>
+              <button class="no" id="noBtn">No 🙃</button>
+              <span class="mini">Edit the <code>CONFIG</code> at the bottom to personalize.</span>
+            </div>
+
+            <div class="footer">
+              <span>Made with 🍓 + a tiny bit of courage.</span>
+              <span>Open on your phone for the best vibe.</span>
+            </div>
+          </div>
+
+          <div class="right">
+            <div class="polaroid">
+              <div class="photo" id="photoBox" aria-label="placeholder photo">
+                <div>
+                  <div style="font-size:18px; margin-bottom:6px;">Add a pic later 📸</div>
+                  <div style="font-size:13px; opacity:.9; font-weight:600;">(optional) Replace this box with an image.</div>
+                </div>
+              </div>
+              <div class="caption" id="captionText">Us soon ✈️ → 💐 → 🌙</div>
+            </div>
+
+            <div class="panel">
+              <p class="note"><strong>FaceTime move:</strong> send her the link and stay on call while she opens it.</p>
+              <p class="note" style="margin-top:10px;"><strong>Extra:</strong> put a QR code on a card/flowers that links here.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modalCard">
+      <div class="modalHeader">
+        <h2 id="modalTitle">SHE SAID YES 💖</h2>
+        <button class="x" id="closeModal" aria-label="Close">✕</button>
+      </div>
+      <div class="modalBody">
+        <p class="note" id="yesMessage">
+          Okay perfect. Now I owe you a date and a dessert.
+        </p>
+
+        <div class="pillRow" aria-label="optional date ideas">
+          <span class="pill">📍 dinner + dessert</span>
+          <span class="pill">🌅 sunset / view</span>
+          <span class="pill">🎶 fun vibe</span>
+          <span class="pill">📸 cute pics</span>
+        </div>
+
+        <div class="copyRow">
+          <button class="copyBtn" id="copyTextBtn">Copy a cute reply</button>
+          <button class="copyBtn" id="planBtn">Lock in a plan</button>
+        </div>
+
+        <p class="note" style="margin-top:10px;" id="copied" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <script>
+    // =========================
+    // CONFIG (edit these!)
+    // =========================
+    const CONFIG = {
+      fromName: "Kent",
+      toName: "Krystle",
+      subtitle: "I’m flying home to see you and I want to make it official. No pressure — just a whole lot of intention.",
+      noteText:
+        "If you say yes, I’ve got a little plan: something cozy, something fun, and a pandan latte at some point. And if you say no… I’ll still be grateful you read this.",
+      captionText: "Us soon ✈️ → 💐 → 🌙",
+      yesMessage: "Okay perfect. Now I owe you a date and a dessert.",
+      noDodges: 4, // how many times the No button dodges
+    };
+
+    // Apply config
+    document.getElementById("fromName").textContent = CONFIG.fromName;
+    document.getElementById("toName").textContent = CONFIG.toName;
+    document.getElementById("subtitle").textContent = CONFIG.subtitle;
+    document.getElementById("noteText").textContent = CONFIG.noteText;
+    document.getElementById("captionText").textContent = CONFIG.captionText;
+    document.getElementById("yesMessage").textContent = CONFIG.yesMessage;
+
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const modal = document.getElementById("modal");
+    const closeModal = document.getElementById("closeModal");
+    const confetti = document.getElementById("confetti");
+    const copied = document.getElementById("copied");
+
+    let dodgeCount = 0;
+
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+
+    function launchConfetti() {
+      confetti.innerHTML = "";
+      const count = 120;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement("span");
+        p.style.left = rand(0, 100) + "vw";
+        p.style.animationDuration = rand(2.8, 5.2) + "s";
+        p.style.animationDelay = rand(0, 0.4) + "s";
+        p.style.transform = `translateY(-10px) rotate(${rand(0, 360)}deg)`;
+        const colors = ["#ff4d8d", "#ff7ab6", "#49f2c2", "#ffd166", "#a78bfa", "#60a5fa"];
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.width = rand(8, 12) + "px";
+        p.style.height = rand(12, 20) + "px";
+        p.style.opacity = rand(0.75, 0.98);
+        confetti.appendChild(p);
+      }
+      setTimeout(() => { confetti.innerHTML = ""; }, 6500);
+    }
+
+    function openModal() {
+      modal.classList.add("show");
+      launchConfetti();
+    }
+
+    function close() {
+      modal.classList.remove("show");
+      copied.textContent = "";
+    }
+
+    yesBtn.addEventListener("click", openModal);
+
+    closeModal.addEventListener("click", close);
+    modal.addEventListener("click", (e) => { if (e.target === modal) close(); });
+
+    // Playful "No" dodge
+    noBtn.addEventListener("mouseenter", () => {
+      dodgeCount++;
+      if (dodgeCount <= CONFIG.noDodges) {
+        const btnRect = noBtn.getBoundingClientRect();
+        const pad = 14;
+        const maxX = window.innerWidth - btnRect.width - pad;
+        const maxY = window.innerHeight - btnRect.height - pad;
+        const x = rand(pad, maxX);
+        const y = rand(pad, maxY);
+        noBtn.style.position = "fixed";
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
+      } else {
+        noBtn.textContent = "Okay fine… Yes 😭";
+        noBtn.classList.remove("no");
+        noBtn.classList.add("yes");
+        noBtn.style.position = "static";
+        noBtn.style.left = "";
+        noBtn.style.top = "";
+      }
+    });
+
+    noBtn.addEventListener("click", () => {
+      if (dodgeCount > CONFIG.noDodges) openModal();
+      else alert("No pressure 💛 — but you can’t click this yet 😅");
+    });
+
+    // Copy a cute text reply
+    document.getElementById("copyTextBtn").addEventListener("click", async () => {
+      const msg = `YES 💗\nOkay now when are we doing dinner + dessert? 😌`;
+      try {
+        await navigator.clipboard.writeText(msg);
+        copied.textContent = "Copied! Paste it in a text 😄";
+      } catch {
+        copied.textContent = "Couldn’t copy here — screenshot works 😄";
+      }
+    });
+
+    // Plan button
+    document.getElementById("planBtn").addEventListener("click", () => {
+      const idea = prompt("Pick a time (e.g., Friday 7pm):", "Friday 7pm");
+      if (!idea) return;
+      copied.textContent = `Locked in: ${idea}. Now pick the vibe 😌`;
+    });
+  </script>
+</body>
+</html>
